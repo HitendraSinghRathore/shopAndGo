@@ -1,0 +1,62 @@
+<div class=" mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h5>Add New Company</h5>
+    </div>
+
+    <div class="card-body container">
+      <div class="alert alert-success" role="alert" *ngIf="successflag">
+        Company Added Successfully
+      </div>
+      <form [formGroup]="companyForm" novalidate (ngSubmit)="addCompany()" >
+      <div class="form-group">
+        <label for="company-name">Company Name <small class="text-danger">(required)</small> </label>
+        <input type="text" formControlName="name" class="form-control" id="company-name"
+        aria-describedby="company-name" placeholder="Name of the company"
+        [ngClass]="{'is-invalid': companyForm.get('name').touched && companyForm.get('name').invalid }">
+        <div class="text-danger"
+        *ngIf="companyForm.get('name').touched && companyForm.get('name').invalid">
+        Name is required</div>
+      </div>
+      <div class="form-group">
+        <label for="gst-number">GST Number <small class="text-danger">(required)</small></label>
+        <input type="text" formControlName="gst" class="form-control" id="gst-number" aria-label="gst number"
+        [ngClass]="{'is-invalid': companyForm.get('gst').touched && companyForm.get('gst').invalid }"
+        placeholder="Enter GST Number">
+        <div class="text-danger"
+        *ngIf="companyForm.get('gst').touched && companyForm.get('gst').invalid">
+        GST Number is required.
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="!companyForm.valid">Add</button>
+    </form>
+    </div>
+
+
+  </div>
+</div>
+<div class="container mt-4 table-responsive">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Company Name</th>
+        <th scope="col">GST Number</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let company of companyList; let i= index;">
+        <th scope="row">{{i + 1}}</th>
+        <td> {{company.name}}</td>
+        <td>{{company.gst}}</td>
+        <td>
+          <button class="btn btn-danger" type="button" (click)="deleteCompany(company.id)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="companyList.length ===0" style="text-align: center;">
+       <td colspan="4" aria-colspan="4">  No Companies found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

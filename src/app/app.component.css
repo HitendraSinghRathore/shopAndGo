@@ -1,0 +1,14 @@
+.nav-item{
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+.highlight {
+  border-bottom: 3px solid #950AF8 !important;
+}
+
+@media screen and (max-width:760px) {
+  .highlight {
+    border: none;
+    background-color: #950AF8;
+  }
+}

@@ -1,0 +1,17 @@
+.btn-primary{
+  background-color: #950AF8;
+  border-color: #950AF8;
+}
+.btn-primary:active{
+  background-color: #7b07ce !important;
+  border-color: #950AF8;
+}
+.add-button{
+  margin-top:0px;
+
+}
+@media screen and (max-width:440px){
+  .add-button {
+    margin-top: 10px;
+  }
+}

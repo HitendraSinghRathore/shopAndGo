@@ -1,0 +1,176 @@
+<div class="mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h5>Order Something</h5>
+    </div>
+    <div class="card-body container">
+      <div class="alert alert-danger" *ngIf="productList.length === 0 || companyList.length === 0">
+        To Place and order, you need to add atleast one company and one product.
+      </div>
+      <form [formGroup]="orderForm" novalidate (ngSubmit)="placeOrder()">
+        <div class="row">
+          <div class="col form-group">
+            <label for="company-name">Company <small class="text-danger">(Required)</small></label>
+            <select id="company-name"  formControlName="company" aria-describedby="company-name" class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                orderForm.get('company').touched &&
+                orderForm.get('company').invalid
+            }"
+            >
+
+          <option *ngFor="let company of companyList" [value]="company.id">{{company.name}}</option>
+          </select>
+          <div *ngIf=" orderForm.get('company').touched &&
+            orderForm.get('company').invalid" class="text-danger">
+            Company name is required.
+          </div>
+          </div>
+          <div class="col form-group">
+            <label for="product-name">Product <small class="text-danger">(Required)</small></label>
+            <select id="product-name"  formControlName="product" aria-describedby="product-name" class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                orderForm.get('product').touched &&
+                orderForm.get('product').invalid
+            }"
+            >
+            <option *ngFor="let product of filteredProducts" [value]="product.name">{{product.name}}</option>
+          </select>
+          <div *ngIf=" orderForm.get('product').touched &&
+            orderForm.get('product').invalid" class="text-danger">
+            Product name is required.
+          </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label for="rate">Price</label>
+            <input type="number" formControlName="rate" id="rate" class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                orderForm.get('rate').touched &&
+                orderForm.get('rate').invalid
+            }"/>
+          </div>
+          <div class="col form-group">
+            <label for="quantity"> Quantity <small class="text-danger">(Required)</small></label>
+            <input formControlName="quantity" type="number" aria-label="quantity" class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                orderForm.get('quantity').touched &&
+                orderForm.get('quantity').invalid
+            }"
+            />
+            <div *ngIf=" orderForm.get('quantity').touched &&
+            orderForm.get('quantity').invalid" class="text-danger">
+            <span *ngIf=" orderForm.get('quantity').errors.required">Quantity is required</span>
+            <span *ngIf=" orderForm.get('quantity').errors.min &&  !orderForm.get('quantity').errors.decimalError">Quantity should be greater than 0</span>
+            <span *ngIf="orderForm.get('quantity').errors.decimalError"> Quantity can not be decimal</span>
+          </div>
+          </div>
+        </div>
+        <hr>
+        <div style="text-align: end;" class="font-weight-bold text-dark">Sub Total: {{totalAmount | currency: 'INR'}}</div>
+        <button type="submit" class="btn btn-primary float-right mt-2" [disabled]="orderForm.invalid">Place Order</button>
+      </form>
+    </div>
+    </div>
+    </div>
+    <div class="container mt-4 table-responsive">
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+
+            <th scope="col">Order Number</th>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Sub Total</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orderList">
+            <th scope="row">{{order.orderNumber}}</th>
+            <td> {{order.product}}</td>
+            <td>{{order.quantity}}</td>
+            <td>{{order.rate * order.quantity | currency: 'INR' }}</td>
+            <td>{{order.date | date: 'longDate'}}</td>
+            <td>
+              <button class="btn btn-dark" type="button" (click)="openInvoice(order)">View Invoice</button>
+            </td>
+          </tr>
+          <tr *ngIf="orderList.length ===0" style="text-align: center;">
+           <td colspan="6" aria-colspan="6">  No Orders found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="modal" tabindex="-1" role="dialog" id="invoice" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Order Id: {{orderObject.orderNumber}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="printPDF">
+            <h3><span class="float-right">Shop & Go</span> <small class="float-left">Invoice</small></h3>
+           <table class="table  table-bordered">
+             <tbody>
+               <tr>
+                 <td class="font-weight-bold">Order ID</td>
+                 <td>#{{orderObject.orderNumber}}</td>
+               </tr>
+               <tr>
+                <td class="font-weight-bold">Order Date</td>
+                <td>{{orderObject.orderDate}}</td>
+              </tr>
+             </tbody>
+           </table>
+           <table class="table  table-bordered">
+             <thead class="thead-light">
+               <tr>
+                 <th>Product</th>
+                 <th>Quantity</th>
+                 <th>Rate</th>
+
+               </tr>
+             </thead>
+            <tbody>
+              <tr>
+                <td>{{orderObject.orderProductName}}</td>
+                <td>{{orderObject.orderQuantity}}</td>
+                <td>{{orderObject.orderProductCost }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table  table-bordered">
+            <thead class="thead-light">
+              <tr>
+                <th>Compnay Name</th>
+                <th>GST</th>
+
+              </tr>
+            </thead>
+           <tbody>
+             <tr>
+               <td>{{orderObject.orderCompanyName}}</td>
+               <td>{{orderObject.orderCompanyGST}}</td>
+             </tr>
+           </tbody>
+         </table>
+         <hr style="border-top: 2px solid black;">
+         <div class="float-right font-weight-bold">Subtotal: {{orderObject.orderTotal }}</div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="export()">Export as PDF</button>
+
+          </div>
+        </div>
+      </div>
+    </div>

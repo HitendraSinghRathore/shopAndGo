@@ -1,0 +1,158 @@
+<div class="mt-4">
+  <div class="card" *ngIf="!editMode">
+    <div class="card-header">
+      <h5>Add New Product</h5>
+    </div>
+
+    <div class="card-body container" >
+      <div class="alert alert-success" role="alert" *ngIf="successflag">
+        Product Added Successfully.
+      </div>
+      <div class="alert alert-danger" role="alert" *ngIf="companyList.length ===0">
+        No compnay data present. Please add a company before adding a product.
+      </div>
+      <form [formGroup]="productForm" novalidate (ngSubmit)="saveProduct()">
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <label for="product-name">Product Name <small class="text-danger">(required)</small>
+            </label>
+            <input type="text" formControlName="name" class="form-control" id="product-name"
+              aria-describedby="product-name" placeholder="Name of the product" [ngClass]="{
+                'is-invalid':
+                  productForm.get('name').touched &&
+                  productForm.get('name').invalid
+              }" />
+            <div class="text-danger" *ngIf="
+                productForm.get('name').touched &&
+                productForm.get('name').invalid
+              ">
+              <span *ngIf="productForm.get('name').errors.required">Product Name is required.</span>
+              <span *ngIf="productForm.get('name').errors.productExists">Product Name is already present, please verify
+                the name.</span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <label for="product-cost">Product Cost <small class="text-danger">(required)</small>
+            </label>
+            <input type="number" formControlName="cost" class="form-control" id="product-cost"
+              aria-describedby="product-cost" placeholder="0.00" [ngClass]="{
+                'is-invalid':
+                  productForm.get('cost').touched &&
+                  productForm.get('cost').invalid
+              }" />
+            <div class="text-danger" *ngIf="
+                productForm.get('cost').touched &&
+                productForm.get('cost').invalid
+              ">
+              <span *ngIf="productForm.get('cost').errors.required">Product cost is required.</span>
+              <span *ngIf="productForm.get('cost').errors.min">Product cost cannot be less the 0.</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="company-name">Company Name <small class="text-danger">(required)</small></label>
+          <select id="company-name" class="form-control"
+          formControlName="company"
+          [ngClass]="{
+            'is-invalid':
+              productForm.get('company').touched &&
+              productForm.get('company').invalid
+          }">
+
+            <option *ngFor="let company of companyList; trackBy: company.id" [value]="company.id">{{company.name}}</option>
+          </select>
+          <div class="text-danger" *ngIf="
+          productForm.get('company').touched &&
+          productForm.get('company').invalid
+          ">Please select a company to proceed</div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid">Add Product</button>
+      </form>
+    </div>
+  </div>
+  <div class="card" *ngIf="editMode">
+    <div class="card-header">
+      <h5>Edit {{productEdit.name}}</h5>
+    </div>
+
+    <div class="card-body container" >
+
+      <form [formGroup]="editForm" novalidate (ngSubmit)="updateProduct()">
+        <div class="row">
+          <div class="col-sm-6 col-xs-12">
+            <label for="product-name">Product Name <small class="text-dark">Product name cannot be changed.</small>
+            </label>
+            <input type="text" formControlName="name" class="form-control" id="product-name"
+              aria-describedby="product-name" placeholder="Name of the product" />
+
+          </div>
+          <div class="col-sm-6 col-xs-12">
+            <label for="product-cost">Product Cost <small class="text-danger">(required)</small>
+            </label>
+            <input type="number" formControlName="cost" class="form-control" id="product-cost"
+              aria-describedby="product-cost" placeholder="0.00" [ngClass]="{
+                'is-invalid':
+                editForm.get('cost').touched &&
+                editForm.get('cost').invalid
+              }" />
+            <div class="text-danger" *ngIf="
+            editForm.get('cost').touched &&
+            editForm.get('cost').invalid
+              ">
+              <span *ngIf="editForm.get('cost').errors.required">Product cost is required.</span>
+              <span *ngIf="editForm.get('cost').errors.min">Product cost cannot be less the 0.</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="company-name">Company Name <small class="text-danger">(required)</small></label>
+          <select id="company-name" class="form-control"
+          formControlName="company"
+          [ngClass]="{
+            'is-invalid':
+            editForm.get('company').touched &&
+            editForm.get('company').invalid
+          }">
+
+            <option *ngFor="let company of companyList; trackBy: company.id" [value]="company.id">{{company.name}}</option>
+          </select>
+          <div class="text-danger" *ngIf="
+          editForm.get('company').touched &&
+          editForm.get('company').invalid
+          ">Please select a company to proceed</div>
+        </div>
+        <button type="submit" class="btn btn-success mr-2" [disabled]="!editForm.valid">Update Product</button>
+        <button class="btn btn-danger mr-2" (click)="deleteProduct(productEdit.name)"> Delete Product</button>
+        <button class="btn btn-primary float-sm-right float-xs-none add-button" (click)="addNewProduct()">Add Product</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4 table-responsive">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Company Name</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of productList; let i= index;">
+        <th scope="row">{{i + 1}}</th>
+        <td> {{product.name}}</td>
+        <td>{{product.cost | currency: 'INR'}}</td>
+        <td>{{product.company | companyName }}</td>
+        <td>
+          <button class="btn btn-dark" type="button" *ngIf="productEdit?.name != product.name" (click)="editProduct(product.name)">Edit</button>
+        </td>
+      </tr>
+      <tr *ngIf="productList.length ===0" style="text-align: center;">
+       <td colspan="5" aria-colspan="5">  No Products found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
