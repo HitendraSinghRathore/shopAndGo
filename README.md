@@ -1,6 +1,9 @@
-# ProductShopping
+# Shop & Go
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.3.
+## Webiste
+
+ The website uses Localstorage to mock a backend. Along with Angular and Bootstrap for frontend. You can see the webiste [Here](https://compassionate-archimedes-ba4ba6.netlify.app/)
 
 ## Development server
 
