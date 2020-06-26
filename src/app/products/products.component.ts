@@ -20,14 +20,14 @@ export class ProductsComponent implements OnInit {
   companyList: ICompany[] = [];
   successflag: boolean = false;
   constructor(private title: Title,
-              private company: CompanyService,
+              private companyService: CompanyService,
               private products: ProductsService) { }
 
 
 ngOnInit() {
     this.title.setTitle('Shop&Go - Products');
     this.productList = this.products.loadAllProducts();
-    this.companyList = this.company.loadAllCompanies();
+    this.companyList = this.companyService.loadAllCompanies();
     this.formInit();
   }
   addNewProduct(){
