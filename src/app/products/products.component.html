@@ -59,7 +59,7 @@
               productForm.get('company').invalid
           }">
 
-            <option *ngFor="let company of companyList; trackBy: company.id" [value]="company.id">{{company.name}}</option>
+            <option *ngFor="let companyObj of companyList;" [value]="companyObj.id">{{companyObj.name}}</option>
           </select>
           <div class="text-danger" *ngIf="
           productForm.get('company').touched &&
@@ -114,7 +114,7 @@
             editForm.get('company').invalid
           }">
 
-            <option *ngFor="let company of companyList; trackBy: company.id" [value]="company.id">{{company.name}}</option>
+            <option *ngFor="let companyObj of companyList; " [value]="companyObj.id">{{companyObj.name}}</option>
           </select>
           <div class="text-danger" *ngIf="
           editForm.get('company').touched &&
